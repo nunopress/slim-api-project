@@ -1,3 +1,17 @@
+# PhpStorm Projects
+/.idea/
+
+# Composer vendor folder
+/private/vendor/
+
+# Composer lock file
+/composer.lock
+
+# App storage
+/shared/storage/*.log
+/shared/storage/*.php
+/shared/storage/twig
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

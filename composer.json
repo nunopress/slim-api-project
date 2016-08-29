@@ -1,0 +1,56 @@
+{
+  "name": "nunopress/slim-api-project",
+  "description": "A Slim Framework skeleton application for rapid development api website",
+  "keywords": ["microframework", "rest", "router", "psr7"],
+  "homepage": "http://github.com/nunopress/slim-api-project",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "NunoPress LLC",
+      "email": "hello@nunopress.com",
+      "homepage": "http://nunopress.com"
+    },
+    {
+      "name": "Josh Lockhart",
+      "email": "info@joshlockhart.com",
+      "homepage": "http://www.joshlockhart.com/"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.0",
+    "slim/slim": "^3.5",
+    "monolog/monolog": "^1.20",
+    "guzzlehttp/guzzle": "^6.2",
+    "twig/twig": "^1.24",
+    "slim/twig-view": "^2.1",
+    "symfony/asset": "^3.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": ">=4.8 < 6.0",
+    "symfony/var-dumper": "^3.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "": "private/src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "private/tests/"
+    }
+  },
+  "scripts": {
+    "dev": [
+      "echo 'Started development web server on http://localhost:8888'",
+      "php -S localhost:8888 -t public public/index_dev.php"
+    ],
+    "prod": [
+      "echo 'Started production web server on http://localhost:7777'",
+      "php -S localhost:7777 -t public public/index.php"
+    ]
+  },
+  "config": {
+    "vendor-dir": "private/vendor"
+  }
+}
