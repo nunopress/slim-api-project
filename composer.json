@@ -53,6 +53,5 @@
   },
   "config": {
     "vendor-dir": "private/vendor"
-  },
-  "minimum-stability": "dev"
+  }
 }
