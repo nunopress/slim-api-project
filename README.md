@@ -32,11 +32,11 @@ We added the base services for our project's and this working really simple.
 
 Our Twig service working with proxy of [Slim Twig View](https://github.com/slimphp/Twig-View) but we modified for working much better with [Symfony Asset Component](http://symfony.com/doc/current/components/asset.html).
 
-We added `url` method instead to use the default `base_url` from Twig View, this new method can used for make a custom url instead only the base url, example:
+We added `url` method instead to use the default `base_url` from Twig View, this new method can used for make a custom url instead only the base url, example `{{ url('assets/css/style.css') }}` or with Asset Component `{{ url(asset('assets/css/style.css')) }}`.
 
-    `{{ url('assets/css/style.css') }}` or with Asset Component `{{ url(asset('assets/css/style.css')) }}`.
+We also added a short version `path` of `path_for`, the method working as the same of Twig View.
 
-We also added a short version `path` of `path_for`, the method working as the same of Twig View (*we think to remove the Twig View in the future releases for this we added this 2 methods*).
+**NOTE:** *we think to remove the Twig View in the future releases for this we added this 2 methods*.
 
 For configure Twig you can following the Twig documentation, we pass the `options` array directly to `Twig_Environment`.
 
@@ -56,8 +56,7 @@ We create abstracted class for our controllers, it's a simple class to inject th
 
 To use our abstract class see this example in this project (you can found it in `private/src/App/Controller/Index.php` file):
 
-```
-<?php
+```php
 
 namespace App\Controller;
 
@@ -95,7 +94,7 @@ We implemented the `$app->resource()` method for easy mapping one Middleware Con
 
 For add the `App\Controller\API` class with REST features you need to configure first the routes (`shared/configurations/routes.global.php`):
 
-```
+```php
 return [
     'app.routes' => [
         [
@@ -127,7 +126,7 @@ The environment is managed by the constant key `APP_ENV` defined inside the `pub
 
 For manage our routes you can edit the configuration file `shared/configurations/routes.global.php` and following the default route for example (*all default keys are required*):
 
-```
+```php
 return [
     'app.routes' => [
         [
@@ -151,7 +150,7 @@ We use all times the Middleware Controller for make more clear our project's so 
 
 For manage our services you can edit the configuration file `shared/configurations/services.global.php` and following our base services:
 
-```
+```php
 return [
     'app.services' => [
         'twig' => NunoPress\Slim\Service\Twig::class,
@@ -169,7 +168,7 @@ Example if you want register your PDO service, you can write this `'pdo' => App\
 
 We use Twig for our template engine because is easy and fast. You can configure with different configurations from the current environment, for production environment edit `shared/configurations/templates.global.php` and for development environment edit `shared/configurations/templates.local.php`.
 
-```
+```php
 return [
     'app.service.templates' => [
         'twig' => [
@@ -195,7 +194,7 @@ Asset Component managed inside the `twig` key because we used with Twig template
 
 You can see the different configuration for the development environment because we don't want the caching and we want enabled the debug:
 
-```
+```php
 return [
     'app.service.templates' => [
         'twig' => [
@@ -212,9 +211,9 @@ return [
 
 It's really easy to understand but we explain:
 
-- private: Inside we found 3 folders, `src`, `tests` and `vendor`. `src` is mapped by composer with namespace by PSR-4, `tests` is used for the phpunit tests and `vendor` is a composer vendor folder.
-- public: This is a web root folder, you need to configure your Virtual Host to point in this folder for make all other folders out of the web.
-- shared: This folder have all files that not class, example templates, configurations, bootstrap, cache, logs and more.
+- **private**: Inside we found 3 folders, `src`, `tests` and `vendor`. `src` is mapped by composer with namespace by PSR-4, `tests` is used for the phpunit tests and `vendor` is a composer vendor folder.
+- **public**: This is a web root folder, you need to configure your Virtual Host to point in this folder for make all other folders out of the web.
+- **shared**: This folder have all files that not class, example templates, configurations, bootstrap, cache, logs and more.
 
 ## Finish
 
