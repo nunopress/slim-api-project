@@ -15,7 +15,7 @@ class Index extends MiddlewareController
     /**
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
-     * @param $args
+     * @param array $args
      * @return mixed
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args)
