@@ -90,7 +90,7 @@ You need to remember to use the `__invoke` method for the Middleware Controller 
 
 ### REST Routes Registration
 
-We implemented the `$app->resource()` method for easy mapping one Middleware Controller with the REST features, this working easy and we explain how to do:
+We implemented the `$app->resource($pattern, $name, MiddlewareController $controller, array $methods = [])` method for easy mapping one Middleware Controller with the REST features, this working easy and we explain how to do:
 
 For add the `App\Controller\API` class with REST features you need to configure first the routes (`shared/configurations/routes.global.php`):
 

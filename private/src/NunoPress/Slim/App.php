@@ -11,11 +11,11 @@ class App extends \Slim\App
     /**
      * @param $pattern
      * @param $name
-     * @param $handle
+     * @param MiddlewareController $controller
      * @param array $methods
      * @return $this
      */
-    public function resource($pattern, $name, $handle, array $methods = [])
+    public function resource($pattern, $name, MiddlewareController $controller, array $methods = [])
     {
         /* @todo: rewrite the key association
         $mappedMethods = [
@@ -27,7 +27,7 @@ class App extends \Slim\App
         ];*/
 
         foreach ($methods as $method) {
-            $this->map([$method], $pattern, $handle . ':' . strtolower($method))->setName($name . '.' . strtolower($method));
+            $this->map([$method], $pattern, $controller . ':' . strtolower($method))->setName($name . '.' . strtolower($method));
         }
 
         return $this;
