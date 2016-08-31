@@ -7,7 +7,7 @@
 /*
  * Mount all routes based on configurations
  */
-if ($container->has('app.routes') and $routes = $container->get('app.routes') and true === is_array($routes)) {
+if ($container->has('config') and $routes = $container->get('config')['routes'] and true === is_array($routes)) {
     foreach ($routes as $route) {
         if (true === isset($route['allowed_methods']) and true === is_array($route['allowed_methods'])) {
             if (true === isset($route['rest']) and true === $route['rest']) {

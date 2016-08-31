@@ -1,16 +1,17 @@
+# dotenv file
+.env
+
 # PhpStorm Projects
-/.idea/
+.idea
 
 # Composer vendor folder
-/private/vendor/
+private/vendor/
 
 # Composer lock file
-/composer.lock
+composer.lock
 
 # App storage
-/shared/storage/*.log
-/shared/storage/*.php
-/shared/storage/twig
+shared/storage/
 
 # Windows image file caches
 Thumbs.db

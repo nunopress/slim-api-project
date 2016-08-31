@@ -4,12 +4,12 @@ Use this skeleton project to quickly setup and start working on a new API websit
 
 This project uses the latest Slim version with this services already configured:
 
-- Templates with [Twig](http://twig.sensiolabs.org/)
-- Logger with [Monolog](https://github.com/Seldaek/monolog)
-- [Guzzle](http://guzzlephp.org/) for HTTP Client
-- Middleware Controllers
-- REST routes registration
-- Dynamic configuration files for routes, services and settings
+- Templates with [Twig](http://twig.sensiolabs.org/) and plain PHP.
+- Logger with [Monolog](https://github.com/Seldaek/monolog).
+- HTTP Client with [Guzzle](http://guzzlephp.org/).
+- Middleware Controllers.
+- REST routes registration.
+- Configuration files for routes, services and settings powered by [Illuminate Config](https://laravel.com).
 
 This skeleton was built for Composer and this makes setting up a new project quick and easy.
 
@@ -17,50 +17,101 @@ This skeleton was built for Composer and this makes setting up a new project qui
 
 Run this command from the directory in which you want to create your new project.
 
-    php composer.phar create-project nunopress/slim-api-project [my-project-name]
+    composer create-project nunopress/slim-api-project [my-project-name]
+
+**NOTE:** remember to have in the global path composer or if you use local composer for you project change to `php composer.par` instead of `composer` only.
 
 Replace `[my-project-name]` with the desired directory name for your new project. You'll want to:
 
 - Point your virtual host document root to your new project `public/` directory.
-- Ensure `shared/storage/*` is web writeable.
+- Ensure `shared/storage/*` is web writable.
 
 ## Services
 
 We added the base services for our project's and this working really simple.
 
-### Twig
+### View
 
-Our Twig service working with proxy of [Slim Twig View](https://github.com/slimphp/Twig-View) but we modified for working much better with [Symfony Asset Component](http://symfony.com/doc/current/components/asset.html).
+We added 2 view renderer: php and Twig.
+
+This Provider working in other way instead Twig View or other Slim View libraries, first we fetch the template and after we choose the output method, this is a example:
+
+```php
+$this->getContainer()->get('view')->fetch($response, 'template_name', $data)->toHtml();
+```
+
+Or with the shortcut version:
+
+```php
+view($response, 'template_name', $data)->toHtml();
+```
+
+You have this 2 methods for write the correctly content type and return the response.
+
+We think is much better because you can save the view renderer in a value and based on your project you can write the output.
+
+You can use 2 method for return the output of your templates:
+
+- toHtml: Output in html content type.
+- toJson: Output in Json content type.
+
+**NOTE:** We create a shortcut to access to the view object `view($response, $template, $data)`.
+
+#### Twig
+
+Our Twig service working with [Symfony Asset Component](http://symfony.com/doc/current/components/asset.html).
 
 We added `url` method instead to use the default `base_url` from Twig View, this new method can used for make a custom url instead only the base url, example `{{ url('assets/css/style.css') }}` or with Asset Component `{{ url(asset('assets/css/style.css')) }}`.
 
 We also added a short version `path` of `path_for`, the method working as the same of Twig View.
 
-**NOTE:** *we think to remove the Twig View in the future releases for this we added this 2 methods*.
-
 For configure Twig you can following the Twig documentation, we pass the `options` array directly to `Twig_Environment`.
 
-### Monolog
+**NOTE:** Remember to use `.twig` extension for your template file and the configuration options found in `providers.twig`.
+
+#### Php
+
+Same as Twig view renderer we added 2 php simple function `url` and `path` and working as proxy same as Twig functions.
+
+**NOTE:** Remember to use `.php` extension for your template file and the configuration options found in `providers.php`.
+
+### Logger
+
+We have included Monolog for save the logs for our projects.
+
+**NOTE:** We create a shortcut for access to logger object `logger($level, $message)`.
+
+#### Monolog
 
 We use Monolog for save the log's for development and production environments. Thanks to the dynamic configuration we have one file (`app-dev.log`) for the development environment and another one (`app-prod.log`) for the production environment.
 
-The configuration is easy to understand, check `shared/configurations/logger.global.php` for production environment and `shared/configurations/logger.local.php` for development environment.
+The configuration is easy to understand, check `shared/configurations/logger.php`.
 
-### Guzzle
+**NOTE:** Remember to edit the configuration options found in `providers.monolog`.
 
-We use GuzzleHttp project for calling the HTTP requests. You can configure easy with the configuration file `shared/configurations/guzzle.global.php`, this configuration passed directly to the `Client` class, for more informations about the options follow the official GuzzleHttp documentation.
+### HTTP Client
+
+For a moment we made a simple wrapper for Guzzle, in the future releases we can add someone if requested from our clients.
+
+#### Guzzle
+
+We use GuzzleHttp project for calling the HTTP requests. You can configure easy with the configuration file `shared/configurations/httpclient.php`, this configuration passed directly to the `Client` class, for more information's about the options follow the official GuzzleHttp documentation.
+
+**NOTE:** Remember to edit the configuration options found in `providers.guzzle`.
 
 ### Middleware Controller
 
 We create abstracted class for our controllers, it's a simple class to inject the DIC inside the controller and you can calling it with `$this->getContainer()` method.
 
-To use our abstract class see this example in this project (you can found it in `private/src/App/Controller/Index.php` file):
+**NOTE:** The default controller called is `App\Controller` in `private/src/App/Controller.php` so if you need you can edit it for make additional functions to your base controller.
+
+To use our abstract class see this example in this project, you can found it in `private/src/App/Controller/Index.php` file:
 
 ```php
 
 namespace App\Controller;
 
-use NunoPress\Slim\MiddlewareController;
+use App\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -68,7 +119,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * Class Index
  * @package App\Controller
  */
-class Index extends MiddlewareController
+class Index extends Controller
 {
     /**
      * @param ServerRequestInterface $request
@@ -78,32 +129,30 @@ class Index extends MiddlewareController
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
-        $this->getContainer()->get('monolog')->info('App / route');
+        logger('info', 'App / route');
 
-        return $this->getContainer()->get('twig')->render($response, 'index.twig', $args);
+        return view($response, 'index', $args)->toHtml();
     }
 }
 ```
 
-You need to remember to use the `__invoke` method for the Middleware Controller class with the Request/Response/Args parameters, more informations about the [Route Middleware](http://www.slimframework.com/docs/objects/router.html#route-middleware).
+You need to remember to use the `__invoke` method for the Middleware Controller class with the Request/Response/Args parameters, more information's about the [Route Middleware](http://www.slimframework.com/docs/objects/router.html#route-middleware).
 
 
 ### REST Routes Registration
 
 We implemented the `$app->resource($pattern, $name, $controller, array $methods = [])` method for easy mapping one Middleware Controller with the REST features, this working easy and we explain how to do:
 
-For add the `App\Controller\API` class with REST features you need to configure first the routes (`shared/configurations/routes.global.php`):
+For add the `App\Controller\API` class with REST features you need to configure first the routes (`shared/configurations/routes.php`):
 
 ```php
 return [
-    'app.routes' => [
-        [
-            'name' => 'api',
-            'path' => '/api',
-            'middleware' => App\Controller\API::class,
-            'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-            'rest' => true
-        ]
+    [
+        'name' => 'api',
+        'path' => '/api',
+        'middleware' => App\Controller\API::class,
+        'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+        'rest' => true
     ]
 ];
 ```
@@ -116,39 +165,39 @@ Someone can think "why use this instead to `any` router method?"; The answer is 
 
 For more information's about our routes configuration read later the Routes section. 
 
-### Dynamic Configuration
+### Illuminate Configuration
 
-Thanks to our dynamic configuration is easy to manage routes, services and settings. Our configurator read **FIRST** the `global` files and then if you use the development environment read the `local` files. We use `array_replace_recursive` for replace the keys so you can make a really different configuration for production and development environment.
+Thanks to Illuminate Config class we can manage really easy our configuration.
 
-The environment is managed by the constant key `APP_ENV` defined inside the `public/index.php` and `public/index_dev.php`.
+The environment is managed by the constant key `APP_DEBUG` defined inside the `public/index.php` and `public/index_dev.php`.
+
+**NOTE:** We create a shortcut for access to the config object with `config($key, $default = null)` and working in the same way of Laravel helper.
 
 #### Routes
 
-For manage our routes you can edit the configuration file `shared/configurations/routes.global.php` and following the default route for example (*all default keys are required*):
+For manage our routes you can edit the configuration file `shared/configurations/routes.php` and following the default route for example (*all default keys are required*):
 
 ```php
 return [
-    'app.routes' => [
-        [
-            'name' => 'api',
-            'path' => '/api[/{name}]',
-            'middleware' => App\Controller\API::class,
-            'allowed_methods' => ['GET'],
-            'rest' => true
-        ],
+    [
+        'name' => 'api',
+        'path' => '/api[/{name}]',
+        'middleware' => App\Controller\API::class,
+        'allowed_methods' => ['GET'],
+        'rest' => true
+    ],
 
-        [
-            'name' => 'index',
-            'path' => '/[{name}]',
-            'middleware' => App\Controller\Index::class,
-            'allowed_methods' => ['GET']
-        ]
+    [
+        'name' => 'index',
+        'path' => '/[{name}]',
+        'middleware' => App\Controller\Index::class,
+        'allowed_methods' => ['GET']
     ]
 ];
 ```
 
 We use all times the Middleware Controller for make more clear our project's so we working fine with this system, we explain how to working:
-- name: Used for save the router name, we use sometimes the dotted naming convension, example `auth.login` or `page.contacts`.
+- name: Used for save the router name, we use sometimes the dotted naming convention, example `auth.login` or `page.contacts`.
 - path: The Slim Framework path for define in the routes.
 - middleware: Full name with namespace for register inside the DIC, we used the constant because we use IDE for writing our project's.
 - allowed_methods: Is an array for every methods and passed this directly to the router map method.
@@ -156,43 +205,55 @@ We use all times the Middleware Controller for make more clear our project's so 
 
 #### Services
 
-For manage our services you can edit the configuration file `shared/configurations/services.global.php` and following our base services:
+For manage our services you can edit the configuration file `shared/configurations/services.php` and following our base services:
 
 ```php
 return [
-    'app.services' => [
-        'twig' => NunoPress\Slim\Service\Twig::class,
-        'guzzle' => NunoPress\Slim\Service\Guzzle::class,
-        'monolog' => NunoPress\Slim\Service\Monolog::class
-    ]
+    'view'          => App\Service\View::class,
+    'httpclient'    => App\Service\HttpClient::class,
+    'logger'        => App\Service\Logger::class
 ];
 ```
 
 You can see really easy to understand but we explain, the key is the name saved inside the DIC, the value is a full namespace name of the class. Another times we use the constants for easy developing with IDE.
 
-Example if you want register your PDO service, you can write this `'pdo' => App\Service\PDO::class` and is accessible inside the DIC with `$container->get('pdo')`.
+Example if you want register your PDO service, you can write this `'pdo' => App\Service\Database\PDO::class` and is accessible inside the DIC with `$container->get('pdo')`.
 
-#### Templates
+#### View
 
-We use Twig for our template engine because is easy and fast. You can configure with different configurations from the current environment, for production environment edit `shared/configurations/templates.global.php` and for development environment edit `shared/configurations/templates.local.php`.
+We use Twig for our views because is easy and fast, but we added the php renderer if you like more this instead of Twig, edit `shared/configurations/view.php` if you need to change the default provider or change providers settings.
 
 ```php
 return [
-    'app.service.templates' => [
+    'default' => 'twig',
+
+    'providers' => [
         'twig' => [
-            'templates_path' => dirname(__DIR__) . '/templates',
+            'path' => realpath(dirname(__DIR__) . '/views'),
+
+            /*
+             * Options passed to Twig_Environment object
+             */
             'options' => [
-                'cache' => dirname(__DIR__) . '/storage/twig',
-                'debug' => false,
+                'cache' => (APP_DEBUG) ? false : realpath(dirname(__DIR__) . '/storage') . DIRECTORY_SEPARATOR . 'views',
+                'debug' => (APP_DEBUG) ? true : false,
                 'autoescape' => false
             ],
 
+            // todo: added this at runtime in the future releases.
             'extensions' => [
 
             ],
 
+            /*
+             * Integration with Symfony Asset Component
+             */
             'assets_url' => '/',
             'assets_version' => null
+        ],
+
+        'php' => [
+            'path' => realpath(dirname(__DIR__) . '/views')
         ]
     ]
 ];
@@ -203,16 +264,29 @@ Asset Component managed inside the `twig` key because we used with Twig template
 You can see the different configuration for the development environment because we don't want the caching and we want enabled the debug:
 
 ```php
-return [
-    'app.service.templates' => [
-        'twig' => [
-            'options' => [
-                'cache' => false,
-                'debug' => true
-            ]
-        ]
-    ]
-];
+'twig' => [
+    'path' => realpath(dirname(__DIR__) . '/views'),
+
+    /*
+     * Options passed to Twig_Environment object
+     */
+    'options' => [
+        'cache' => (APP_DEBUG) ? false : realpath(dirname(__DIR__) . '/storage') . DIRECTORY_SEPARATOR . 'views',
+        'debug' => (APP_DEBUG) ? true : false,
+        'autoescape' => false
+    ],
+
+    // todo: added this at runtime in the future releases.
+    'extensions' => [
+
+    ],
+
+    /*
+     * Integration with Symfony Asset Component
+     */
+    'assets_url' => '/',
+    'assets_version' => null
+]
 ```
 
 ## Project folders

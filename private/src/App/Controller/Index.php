@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use NunoPress\Slim\MiddlewareController;
+use App\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * Class Index
  * @package App\Controller
  */
-class Index extends MiddlewareController
+class Index extends Controller
 {
     /**
      * @param ServerRequestInterface $request
@@ -20,8 +20,8 @@ class Index extends MiddlewareController
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
-        $this->getContainer()->get('monolog')->info('App / route');
+        logger('info', 'App / route');
 
-        return $this->getContainer()->get('twig')->render($response, 'index.twig', $args);
+        return view($response, 'index', $args)->toHtml();
     }
 }

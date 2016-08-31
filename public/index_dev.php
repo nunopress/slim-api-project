@@ -20,7 +20,7 @@ if ('cli-server' == php_sapi_name() and is_file(__DIR__ . preg_replace('#(\?.*)$
 /*
  * Define development environment
  */
-define('APP_ENV', 'dev');
+define('APP_DEBUG', true);
 
 /*
  * Create new application

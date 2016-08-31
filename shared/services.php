@@ -7,7 +7,7 @@
 /*
  * Register all services based on configurations
  */
-if ($container->has('app.services') and $services = $container->get('app.services') and true === is_array($services)) {
+if ($container->has('config') and $services = $container->get('config')['services'] and true === is_array($services)) {
     foreach ($services as $name => $class) {
         $container[$name] = new $class($container);
     }

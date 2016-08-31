@@ -5,13 +5,9 @@
  */
 
 /*
- * Load global/local configuration files based on environment
+ * Load configuration files
  */
-if (true === defined('APP_ENV') and 'dev' == APP_ENV) {
-    $files = glob(__DIR__ . '/configurations/{{,*.}global,{,*.}local}.php', GLOB_BRACE);
-} else {
-    $files = glob(__DIR__ . '/configurations/{{,*.}global}.php', GLOB_BRACE);
-}
+$files = glob(__DIR__ . '/configurations/*.php', GLOB_BRACE);
 
 /*
  * Setup the configuration array
@@ -23,7 +19,9 @@ $settings = [];
  */
 if (0 < count($files)) {
     foreach ($files as $file) {
-        $settings = array_replace_recursive($settings, include $file);
+        $key = str_replace('.php', '', basename($file));
+
+        $settings[$key] = include realpath($file);
     }
 }
 

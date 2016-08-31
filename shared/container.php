@@ -12,9 +12,22 @@
 $configuration = require_once 'configuration.php';
 
 /*
+ * Change slim configuration out of the Slim key for compatibility with
+ * the Slim container.
+ *
+ * todo: We need to found another way to make this.
+ */
+$slim = $configuration['slim'];
+unset($configuration['slim']);
+
+$settings = array_merge($slim, [
+    'config' => new \Illuminate\Config\Repository($configuration)
+]);
+
+/*
  * Make a container
  */
-$container = new \Slim\Container($configuration);
+$container = new \Slim\Container($settings);
 
 /*
  * Return a container

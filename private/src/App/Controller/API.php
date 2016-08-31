@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use NunoPress\Slim\MiddlewareController;
+use App\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * Class API
  * @package App\Controller
  */
-class API extends MiddlewareController
+class API extends Controller
 {
     /**
      * @param ServerRequestInterface $request
@@ -20,7 +20,7 @@ class API extends MiddlewareController
      */
     public function get(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
-        $this->getContainer()->get('monolog')->info('App /api route with REST GET');
+        $this->getContainer()->get('logger')->info('App /api route with REST GET');
 
         return $response->withJson([
             'code' => 200,

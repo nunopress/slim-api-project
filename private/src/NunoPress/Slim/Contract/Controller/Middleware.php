@@ -1,14 +1,14 @@
 <?php
 
-namespace NunoPress\Slim;
+namespace NunoPress\Slim\Contract\Controller;
 
 use Interop\Container\ContainerInterface;
 
 /**
- * Class MiddlewareController
- * @package NunoPress\Slim
+ * Class Middleware
+ * @package NunoPress\Slim\Contract\Controller
  */
-abstract class MiddlewareController
+abstract class Middleware
 {
     /**
      * @var ContainerInterface

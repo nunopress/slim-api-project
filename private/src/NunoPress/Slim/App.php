@@ -32,4 +32,20 @@ class App extends \Slim\App
 
         return $this;
     }
+
+    /**
+     * @param string $key
+     * @param null $default
+     * @return null
+     */
+    public function config($key, $default = null)
+    {
+        $config = $this->getContainer()->get('config');
+
+        if (false === isset($config[$key])) {
+            return $default;
+        } else {
+            return $config[$key];
+        }
+    }
 }
